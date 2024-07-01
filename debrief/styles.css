@@ -1,0 +1,75 @@
+body {
+    overflow-y: scroll;
+}
+
+.bodyContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title h1 {
+    font-size: xx-large;
+    font-style: bold;
+}
+
+.title h2 {
+    font-size: x-large;
+    font-style: bold;
+}
+
+#debriefForm {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    width: 100%;
+    height: 100%;
+}
+
+.formField {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    justify-content: space-between;
+    margin: 1rem;
+    font-size: larger;
+}
+
+.m-4 {
+    margin: 1.5rem;
+}
+
+.btnContainer {
+    display: flex;
+    justify-content: end;
+}
+
+.btnContainer button {
+    display: flex;
+    border-radius: 5%;
+    background-color: coral;
+    font-size: large;
+    padding: 2rem;
+    margin-right: 1rem;
+    transition: transform 0.25s; 
+}
+
+.btnContainer button:hover {
+    transform: scale(1.25);
+}
+
+.hidden {
+    display: none;
+}

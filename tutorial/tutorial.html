@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Pointer</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="tutorial/styles.css">
+        <script src="jatos.js"></script>
+    </head>
+
+    <body>
+        <div class="bodyContent">
+            <div id="experimentIncomplete" class="title">
+                <h1 class="">Welcome to Pointer!</h1>
+                <p class="">In this game, you are a wizard's apprentice trying to learn what a series of magic stones do.</p>
+                <p>The magic stones look like this:</p>
+                <div class="imgsArray">
+                    <img src="static/imgs/icons/room1.png"></img>
+                    <img src="static/imgs/icons/room2.png"></img>
+                    <img src="static/imgs/icons/room3.png"></img>
+                    <img src="static/imgs/icons/room4.png"></img>
+                    <img src="static/imgs/icons/room5.png"></img>
+                    <img src="static/imgs/icons/room6.png"></img>
+                    <img src="static/imgs/icons/room7.png"></img>
+                </div>
+                <p class="">You start with a score between -10 and +10, and using each stone will change your score somehow.</p>
+                <p class="">The stones are laid out in 2 paths. Once you choose a path, you must complete it by clicking on all the stones.</p>
+                <p> In order to win, your score after you've used all the stones must match the goal score displayed at the top of the screen.</p>
+                <p>Your start score is displayed on the left, and target on the right, like this:</p>
+                <img src="static/imgs/progressBar.png"></img>
+                <p>The score will be updated after clicking on each stone. Pay attention to what happens!</p>
+                <p>It is important to give the game your full focus, and it must be played in fullscreen mode. Exiting fullscreen will cause the game to exit.</p>
+                <p>Good Luck!</p>
+                <button class="proceedBtn" id = "proceedBtn">Proceed</button>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("proceedBtn").addEventListener("click", () => {
+                jatos.startNextComponent(); // to game
+            })
+            
+        </script>
+        
+    </body>
+
+</html>

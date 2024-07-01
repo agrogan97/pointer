@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pointer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="debrief/styles.css">
+    <script src="jatos.js"></script>
+    <script src="lib/p5/p5.js"></script>
+    <script src="lib/lodash/lodash.js"></script>
+    <script src="lib/psychex/psychex.js"></script>
+</head>
+
+<body class="bg-blue-900 overflow-y-scroll">
+    <div class="bodyContent">
+        <div class="mx-96 my-12 p-8 bg-slate-50 100dvh h-full rounded-xl shadow-xl">
+            <div id="experimentComplete" class="">
+                <div class="title">
+                    <h1 class="">Experiment Complete</h1>
+                    <h2 class=""> Thank-you for participating!</h2>
+                    <p id="participating" class="">Before you go, we'd like to ask some questions about how you experienced the task: </p>
+                </div>
+
+                <form id="debriefForm" onsubmit="return false">
+                    <!-- Input 1 -->
+                    <div class="formField flex flex-row align-center items-center my-2 justify-between">
+                        <label for="inputA" class="m-4">What did this magic stone do? Try and write the rules: <img id="stoneA" src="" width=73></label>
+                        <textarea id="inputA" name="inputA" required placeholder="Enter response here" maxlength="256"></textarea>
+                    </div>
+
+                    <div class="formField flex flex-row align-center items-center my-2 justify-between">
+                        <label for="inputB" class="m-4">What did this magic stone do? Try and write the rules: <img id="stoneB" src="" width=73></label>
+                        <textarea id="inputB" name="inputB" required placeholder="Enter response here" maxlength="256"></textarea>
+                    </div>
+
+                    <div class="formField flex flex-row align-center items-center my-2 justify-between">
+                        <label for="inputC" class="m-4">What did this magic stone do? Try and write the rules: <img id="stoneC" src="" width=73></label>
+                        <textarea id="inputC" name="inputC" required placeholder="Enter response here" maxlength="256"></textarea>
+                    </div>
+
+                    <div class="formField flex flex-row align-center items-center my-2 justify-between">
+                        <label for="inputD" class="m-4">What did this magic stone do? Try and write the rules: <img id="stoneD" src="" width=73></label>
+                        <textarea id="inputD" name="inputD" required placeholder="Enter response here" maxlength="256"></textarea>
+                    </div>
+
+                    <div class="formField flex flex-row align-center items-center my-2 justify-between">
+                        <label for="inputE" class="m-4">What did this magic stone do? Try and write the rules: <img id="stoneE" src="" width=73></label>
+                        <textarea id="inputE" name="inputE" required placeholder="Enter response here" maxlength="256"></textarea>
+                    </div>
+                    
+                    <div class="formField flex flex-row align-center items-center my-2 justify-between">
+                        <label for="inputF" class="m-4">Did you find any of the magic stones more difficult to use than others?</label>
+                        <textarea id="inputF" name="inputF" required placeholder="Enter response here" maxlength="256"></textarea>
+                    </div>
+                    
+                    <div class="formField flex flex-row align-center items-center my-2 justify-between">
+                        <label for="inputG" class="m-4">Did you find the game enjoyable to play?<br> Would you like to suggest any improvements?</label>
+                        <textarea id="inputG" name="inputG" required placeholder="Enter response here" maxlength="256"></textarea>
+                    </div>
+                    
+                    <div class="formField flex flex-row align-center items-center my-2 justify-between">
+                        <label for="inputH" class="m-4">Is there anything else you would like to share with us?<br> E.g. did you take notes during the game?</label>
+                        <textarea id="inputH" name="inputH" required placeholder="Enter response here" maxlength="256"></textarea>
+                    </div>
+                    <div class="btnContainer">
+                        <button id="submitBtn" type="submit" value="submit" class="flex my-4 rounded-md bg-blue-800 text-xl p-4 text-slate-100 min-w-30 text-wrap hover:scale-110 ease-in duration-200">Submit</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="experimentIncomplete" class="hidden">
+                <h1 class="mb-4 text-3xl font-semibold">Experiment Ended</h1>
+                <h2 class="mb-2 text-2xl font-semibold">Detected exited fullscreen mode.</h2>
+                <p class="py-4">Think this was a mistake? Please contact oxgames@psy.ox.ac.uk</p>
+            </div>
+            
+            
+        </div>
+    </div>
+
+    <script>
+        let mapping = JSON.parse(Utils.getUrlParams(["message"]).message).mapping  || undefined
+        let assets = {}
+        let Qs;
+        if (mapping != undefined) {
+            // mapping = mapping.split("_").slice(0, -1)
+            document.getElementById("stoneA").src= `static/imgs/icons/${mapping[0].replace("_", "")}.png`;
+            document.getElementById("stoneB").src= `static/imgs/icons/${mapping[1].replace("_", "")}.png`;
+            document.getElementById("stoneC").src= `static/imgs/icons/${mapping[2].replace("_", "")}.png`;
+            document.getElementById("stoneD").src= `static/imgs/icons/${mapping[3].replace("_", "")}.png`;
+            document.getElementById("stoneE").src= `static/imgs/icons/${mapping[4].replace("_", "")}.png`;
+            Qs = `What did this magic stone (${mapping[0]}) do? Try and write the rules:; What did this magic stone (${mapping[1]}) do? Try and write the rules:; What did this magic stone (${mapping[2]}) do? Try and write the rules:; What did this magic stone (${mapping[3]}) do? Try and write the rules:; What did this magic stone (${mapping[4]}) do? Try and write the rules:; Did you find any of the magic stones more difficult to use than others?; Did you find the game enjoyable to play? Would you like to suggest any improvements?; Is there anything else you would like to share with us? E.g. did you take notes during the study?`
+        } else {
+            // document.getElementById("participating").innerHTML = "Responses submitted. <br><br> Your Prolific completion code is: <b>C1ENAX1O</b> <br><br>You may now close the window."
+        }
+        let responses = {};
+        document.getElementById("debriefForm").addEventListener("submit", (e) => {
+            e.preventDefault()
+            let formData = new FormData(e.target)
+            responses.inputA = formData.get("inputA")
+            responses.inputB = formData.get("inputB")
+            responses.inputC = formData.get("inputC")
+            responses.inputD = formData.get("inputD")
+            responses.inputE = formData.get("inputE")
+            responses.inputF = formData.get("inputF")
+            responses.inputG = formData.get("inputG")
+            let submitBtn = document.getElementById("submitBtn")
+            submitBtn.setAttribute("disabled", "")
+            document.getElementById("debriefForm").reset() 
+            // console.log({responses:JSON.stringify(responses), playerId:playerId, questions: Qs})
+            // and hide form
+            let jatosData = jatos.urlQueryParameters;
+            let data = {responses: JSON.stringify(responses), ...jatos.urlQueryParameters, questions: Qs}
+            console.log(data)
+            // submitData(data).then((res) => console.log(res.status, res.statusText))
+            jatos.submitResultData(data).then(() => {
+                // TODO add Prolific redirect link here
+                jatos.endStudyAndRedirect(
+                    jatos.componentJsonInput.redirectTo
+                )
+            })
+        })
+
+        
+    </script>
+</body>
+
+
+</html>

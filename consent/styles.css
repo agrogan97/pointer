@@ -1,0 +1,46 @@
+html {
+    max-width: 100%;
+    overflow-x: hidden;
+    /* overflow-y: hidden; */
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    max-width: 100%;
+    background-color: rgb(255, 255, 255);
+    overflow-x: hidden;
+    /* overflow-y: scroll; */
+    z-index: 100;
+}
+
+.mainContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+p {
+    font-size: 20px;
+}
+
+li {
+    font-size: 18px;
+    padding-top: 5px;
+}
+
+.proceedBtn {
+    font-size: 2rem;
+    margin: 1rem;
+    padding: 1rem;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+    background-color: #dcdedf;
+    transition: transform 0.25s; 
+}
+
+.proceedBtn:hover {
+    transform: scale(1.25);
+}
