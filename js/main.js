@@ -100,7 +100,7 @@ class MyGame extends Game{
         this.roundIndex += 1;
 
         if (this.roundIndex != 0){
-            myGame.saveDataToJatos();
+            myGame.saveDataToJatos(content.graph.config);
         }
         if (this.roundIndex == this.curriculum.length){
             // end game

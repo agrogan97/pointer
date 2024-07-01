@@ -241,7 +241,7 @@ class Graph extends Primitive {
                 // Compute new score
                 let concept = this.config[`path${node.path}`].sequence[node.depth];
                 let score = this.computeScore(concept)
-                console.log(`Concept: ${concept} -- Score: ${content.prog.score} -> ${score}`)
+                // console.log(`Concept: ${concept} -- Score: ${content.prog.score} -> ${score}`)
                 content.prog.updateScore(score, this.animationDelay);
                 // Get the path that wasn't clicked on
                 let otherPath = (node.path == "A" ? "B" : "A");
@@ -286,7 +286,7 @@ class Graph extends Primitive {
             // Compute new score
             let concept = this.config[`path${this.player.onPath}`].sequence[index];
             let score = this.computeScore(concept);
-            console.log(`Concept: ${concept} -- Score: ${content.prog.score} -> ${score}`)
+            // console.log(`Concept: ${concept} -- Score: ${content.prog.score} -> ${score}`)
             content.prog.updateScore(score, this.animationDelay);
             // Update the player depth
             this.player.depth = index;
@@ -297,7 +297,6 @@ class Graph extends Primitive {
             // Make transparent
             node.update({tint: [255, 128]});
             // Make line transparent
-            console.log(index)
             // this.player.onPath == "A" ? this.linesA[index-1].update({stroke: `rgba(0, 0, 0, ${this.reducedAlpha})`}) : this.linesB[index-1].update({stroke: `rgba(0, 0, 0, ${this.reducedAlpha})`});
 
             if (this.player.depth + 1 == this.config.strategyLevel){
@@ -317,7 +316,6 @@ class Graph extends Primitive {
 
     onRoundEnd(score){
         // handle logic for the end of the round
-        console.log(score, this.config.target)
         this.hideBtn = false;
 
         // If they chose the right path, show the 'correct image', then after 1.5 seconds, let them click to go to the next round
@@ -331,8 +329,8 @@ class Graph extends Primitive {
         this.config.finalScore = score;
         this.config.isCorrect = (this.config.finalScore == this.config.target)
         this.config.endTime = Date.now();
-        console.log(`-- Round End --`)
-        console.log(this.config)
+        // console.log(`-- Round End --`)
+        // console.log(this.config)
         // after 1.5 seconds let them click to go to the next round
         setTimeout(() => {
             this.endBtn.text.update({textSize: 24})
