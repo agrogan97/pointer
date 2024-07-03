@@ -14,8 +14,6 @@ function preload(){
     // NB: If using jatos, double check your URLs
 
     assets.imgs.arrow = loadImage("static/imgs/arrow.png");
-    assets.imgs.goal_en = loadImage("static/imgs/goal_en.png");
-    assets.imgs.goal_pt = loadImage("static/imgs/goal_pt.png");
     assets.imgs.char = loadImage("static/imgs/character.png");
 
     // Load room imgs

@@ -23,7 +23,6 @@ class Graph extends Primitive {
         this.startImgPos = createVector(50, 20);
         this.startImg = new pImage(50, 20, assets.imgs.char).setScale(0.5);
         // Set end point image
-        this.endImg = new pImage(50, 90, this.lang == "en" ? assets.imgs.goal_en : assets.imgs.goal_pt).setScale(0.2);
         let endBtnDims = Primitive.toPercentage(createVector(assets.imgs.char.width, assets.imgs.char.height));
         this.endBtn = new pButton(
             50, 90,
@@ -37,7 +36,7 @@ class Graph extends Primitive {
             B : (s) => {return s + 1},
             C : (s) => {return s * 2},
             D : (s) => {return s * -1},
-            E : (start) => {return start}
+            E : (start) => {return 0}
         }
 
         // this.imgs = _.sampleSize(assets.imgs.icons, 5);
@@ -195,7 +194,7 @@ class Graph extends Primitive {
         this.linesB = [];
         
         // Work out how much vertical screen space we have available
-        let freeSpace = (this.endImg.pos.y - this.endImg.dims.y/2) - (this.startImg.pos.y + this.startImg.pos.y);
+        let freeSpace = (this.endBtn.pos.y - this.endBtn.dims.y/2) - (this.startImg.pos.y + this.startImg.pos.y);
         // The number of available divisions depends on the strategy level
         let spacePerDivison = freeSpace / this.config.strategyLevel;
         this.nodes = [];
