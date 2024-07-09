@@ -20,16 +20,16 @@ class Graph extends Primitive {
         }
 
         // Set starting point image
-        this.startImgPos = createVector(50, 20);
-        this.startImg = new pImage(50, 20, assets.imgs.char).setScale(0.5);
+        this.startImgPos = createVector(30, 25);
+        this.startImg = new pImage(this.startImgPos.x, this.startImgPos.y, assets.imgs.char).setScale(sizing.imgScale);
         // Set end point image
-        let endBtnDims = Primitive.toPercentage(createVector(assets.imgs.char.width, assets.imgs.char.height));
+        let endBtnDims = createVector(50, 7.5);
         this.endBtn = new pButton(
-            50, 90,
+            30, 12.5,
             // % sizing here will depend on browser vs. mobile, so we'll anchor it relative to image size
-            endBtnDims.x, endBtnDims.y*0.5,
+            endBtnDims.x, endBtnDims.y,
             {backgroundColor: 'orange'}
-        ).addText(this.langMapping[this.lang].goalText, {textSize: 32});
+        ).addText(this.langMapping[this.lang].goalText, {textSize: sizing.ts});
 
         this.mapping = {
             A : (s) => {return s},
@@ -65,8 +65,7 @@ class Graph extends Primitive {
 
         // Aesthetics params
         this.reducedAlpha = 0.2;
-        this.hideBtn = true;
-        this.animationDelay = 2;
+        this.animationDelay = 2.5;
     }
 
     generateRound(conceptLevel, strategyLevel){
@@ -119,6 +118,8 @@ class Graph extends Primitive {
         let otherPath = (targetPath == "pathA" ? "pathB" : "pathA");
         config.target = (config[targetPath].end == config.start ? config[otherPath].end : config[targetPath].end);
         config.targetPath = targetPath;
+        // Add space for current score
+        config.score = config.start;
 
         return config
     }
@@ -194,9 +195,11 @@ class Graph extends Primitive {
         this.linesB = [];
         
         // Work out how much vertical screen space we have available
-        let freeSpace = (this.endBtn.pos.y - this.endBtn.dims.y/2) - (this.startImg.pos.y + this.startImg.pos.y);
+        // let freeSpace = (this.endBtn.pos.y - this.endBtn.dims.y/2) - (this.startImg.pos.y + this.startImg.pos.y);
+        let freeSpace = 60
         // The number of available divisions depends on the strategy level
-        let spacePerDivison = freeSpace / this.config.strategyLevel;
+        // let spacePerDivison = freeSpace / this.config.strategyLevel;
+        let spacePerDivison = 15;
         this.nodes = [];
         
         _.range(0, this.config.strategyLevel).forEach(i => {
@@ -204,11 +207,11 @@ class Graph extends Primitive {
             let tmpA = undefined;
             let tmpB = undefined;
             if (transfer){
-                tmpA = new pImage(40, y, this.transferImgMapping[this.config.pathA.sequence[i]]).setScale(0.5);
-                tmpB = new pImage(60, y, this.transferImgMapping[this.config.pathB.sequence[i]]).setScale(0.5);
+                tmpA = new pImage(15, y, this.transferImgMapping[this.config.pathA.sequence[i]]).setScale(sizing.imgScale);
+                tmpB = new pImage(45, y, this.transferImgMapping[this.config.pathB.sequence[i]]).setScale(sizing.imgScale);
             } else {
-                tmpA = new pImage(40, y, this.imgMapping[this.config.pathA.sequence[i]]).setScale(0.5);
-                tmpB = new pImage(60, y, this.imgMapping[this.config.pathB.sequence[i]]).setScale(0.5);
+                tmpA = new pImage(15, y, this.imgMapping[this.config.pathA.sequence[i]]).setScale(sizing.imgScale);
+                tmpB = new pImage(45, y, this.imgMapping[this.config.pathB.sequence[i]]).setScale(sizing.imgScale);
             }
             // Log which depth level these are on, so we can make the successive depths clickable dynamically and not all at once
             tmpA.depth = i; // this is the depth in the tree
@@ -241,7 +244,11 @@ class Graph extends Primitive {
                 let concept = this.config[`path${node.path}`].sequence[node.depth];
                 let score = this.computeScore(concept)
                 // console.log(`Concept: ${concept} -- Score: ${content.prog.score} -> ${score}`)
-                content.prog.updateScore(score, this.animationDelay);
+                // content.prog.updateScore(score, this.animationDelay);
+                console.log(this.config.score, score, concept)
+                content.pb.beginTransition(this.config.score, score);
+                // Update the score
+                this.config.score = score;
                 // Get the path that wasn't clicked on
                 let otherPath = (node.path == "A" ? "B" : "A");
                 // Make the other unclickable
@@ -253,25 +260,21 @@ class Graph extends Primitive {
                 node.toggleClickable();
                 // and lower its alpha
                 node.update({tint: [255, 128]})
-                // Move character img
-                this.startImg.pos = createVector(node.pos.x+5, node.pos.y)
-                this.startImg.setScale(0.25);
-                // Lower alpha on lines
-                // Make the next nodes in the path clickable
                 this.player.onPath = node.path;
                 // Decrease alpha on other path
                 this.player.onPath == "A" ? this.linesB.forEach(l => {l.update({stroke:`rgba(0, 0, 0, ${this.reducedAlpha})`})}) : this.linesA.forEach(l => {l.update({stroke:`rgba(0, 0, 0, ${this.reducedAlpha})`})});
-                // Decrease transparency of used path
-                // this.player.onPath == "A" ? this.linesA[0].update({stroke: `rgba(0, 0, 0, ${this.reducedAlpha})`}) : this.linesB[0].update({stroke: `rgba(0, 0, 0, ${this.reducedAlpha})`});
                 // Store the path chosen and a reference to the nodes
                 this.player.pathRef = this.nodes.filter(n => (n.path == node.path));
                 // Make the proceeding nodes on the path clickable, unless this is level 1
                 if (this.config.strategyLevel == 1){
-                    this.onRoundEnd(score)
+                    setTimeout(() => {
+                        this.onRoundEnd(score);
+                    }, 1000)
+                    
                 } else {
                     setTimeout(() => {
                         this.triggerClickable(this.player.depth + 1);
-                    }, 3000)
+                    }, this.animationDelay*1000)
                 }
             }
         })
@@ -280,28 +283,31 @@ class Graph extends Primitive {
     triggerClickable(index) {
         // For the node at the provided index
         let node = this.player.pathRef[index];
+        // content.pb.showTransition = false;
+        // content.pb.trans
         node.toggleClickable();
         node.onClick = () => {
             // Compute new score
             let concept = this.config[`path${this.player.onPath}`].sequence[index];
             let score = this.computeScore(concept);
-            // console.log(`Concept: ${concept} -- Score: ${content.prog.score} -> ${score}`)
-            content.prog.updateScore(score, this.animationDelay);
+            console.log(this.config.score, score, concept)
+            content.pb.beginTransition(this.config.score, score);
+            this.config.score = score;
             // Update the player depth
             this.player.depth = index;
             // Make this node unclickable
             node.toggleClickable();
-            // Move the character
-            this.startImg.pos = createVector(node.pos.x+5, node.pos.y);
             // Make transparent
             node.update({tint: [255, 128]});
             // Make line transparent
-            // this.player.onPath == "A" ? this.linesA[index-1].update({stroke: `rgba(0, 0, 0, ${this.reducedAlpha})`}) : this.linesB[index-1].update({stroke: `rgba(0, 0, 0, ${this.reducedAlpha})`});
 
             if (this.player.depth + 1 == this.config.strategyLevel){
-                this.onRoundEnd(score);
+                setTimeout(() => {
+                    this.onRoundEnd(score);
+                }, 1000)
+                
             } else {
-                // Make the next clickable 1.5s after being clicked
+                // Make the next icon clickable
                 setTimeout(() => {
                     try {
                         this.triggerClickable(this.player.depth + 1);
@@ -320,30 +326,31 @@ class Graph extends Primitive {
         // If they chose the right path, show the 'correct image', then after 1.5 seconds, let them click to go to the next round
         if (score == this.config.target){
             this.endBtn.text.text = this.langMapping[this.lang].correctText;
+            this.endBtn.rect.update({backgroundColor: "green"});
         } else {
             // Otherwise, show incorrect
             this.endBtn.text.text = this.langMapping[this.lang].incorrectText;
+            this.endBtn.rect.update({backgroundColor: "red"});
         }
         // Log final score, result, and endtime
         this.config.finalScore = score;
         this.config.isCorrect = (this.config.finalScore == this.config.target)
         this.config.endTime = Date.now();
-        // console.log(`-- Round End --`)
-        // console.log(this.config)
-        // after 1.5 seconds let them click to go to the next round
-        setTimeout(() => {
-            this.endBtn.text.update({textSize: 24})
+        setTimeout(() => { 
+            // This timeout makes the end of round button clickable 
+            this.endBtn.text.update({textSize: sizing.ts})
             this.endBtn.text.text = this.langMapping[this.lang].nextRoundText;
+            this.endBtn.rect.update({backgroundColor: "orange"})
             this.endBtn.onClick = () => {myGame.newRound()}
-        }, 2500)
+        }, 2000)
     }
 
     computeScore(concept) {
         // Separate function to contain the logic for updating while factoring in the start score stuff
         if (concept == "E"){
-            return this.config.start
+            return 0
         } else {
-            return this.mapping[concept](content.prog.score);
+            return this.mapping[concept](this.config.score);
         }
     }
 
@@ -352,8 +359,7 @@ class Graph extends Primitive {
         this.endBtn.text.text = this.langMapping[this.lang].goalText;
         // Reset char position
         this.startImg.pos = this.startImgPos;
-        this.startImg.setScale(0.5);
-        this.hideBtn = true;
+        this.hideBtn = false;
     }
 
     draw(){

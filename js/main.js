@@ -4,6 +4,7 @@ var params = {verbose: false, positionMode: "PERCENTAGE", textAlign: "CENTER", i
 // ------------
 var content = {};
 var myGame;
+var sizing = {};
 
 function handleClick(e){ 
     pClickListener(e) 
@@ -24,26 +25,44 @@ function preload(){
 }
 
 function setup(){
-    var canvas = createCanvas(windowWidth, windowHeight);
+    var canvas = createCanvas(350, windowHeight);
+    // canvas.offsetLeft = 250
     pixelDensity(1);
     frameRate(60)
     canvas.parent("gameCanvas")
     document.addEventListener("click", (e) => {handleClick(e)});
     myGame = new MyGame();
-    content.myText = new pText("Psychex", 50, 50, {textSize: 32});
+
+    if (window.innerWidth <= 500){
+        console.log("mobile")
+        sizing.headingSize = 22;
+        sizing.ts = 16;
+        sizing.imgScale = 0.3;
+        sizing.circleScale = 0.75;
+    } else {
+        console.log("desktop")
+        sizing.headingSize = 26;
+        sizing.ts = 18;
+        sizing.imgScale = 0.3;
+        sizing.circleScale = 0.2;
+    }
 
     content.prog = new ProgressIndicator(0, 0);
     content.graph = new Graph();
+
+    content.pb = new ProgressBar(75, 50);
 
     myGame.newRound();
 }
 
 function draw(){
     clear();
-    content.prog.draw();
+    // background('grey')
+    // content.prog.draw();
     content.graph.draw();
-    pText.draw_(`Round ${myGame.roundIndex+1}/${myGame.curriculum.length}`, 50, 4.5);
-    pText.draw_(`Phase ${myGame.roundType == "training" ? 1 : (myGame.roundType == "test" ? 2 : 3)}/3`, 50, 8);
+    pText.draw_(`Round ${myGame.roundIndex+1}/${myGame.curriculum.length}`, 30, 4.5, {textSize: sizing.headingSize});
+    // pText.draw_(`Phase ${myGame.roundType == "training" ? 1 : (myGame.roundType == "test" ? 2 : 3)}/3`, 50, 8);
+    content.pb.draw();
 }
 
 // --- Custom --- //
@@ -54,10 +73,10 @@ class MyGame extends Game{
         super();
 
         // training depends on curriculum type used and is 2 repeats either concept-wise or strategy-wise
-        this.curriculumType = Utils.getJatosParams(["CT"]).CT || Utils.getUrlParams().CT || undefined;
+        // this.curriculumType = Utils.getJatosParams(["CT"]).CT || Utils.getUrlParams().CT || undefined;
         if (this.curriculumType == undefined){
             console.log(`Unable to find curriculum type. Using concept as default`)
-            this.curriculumType = "concept"
+            this.curriculumType = "strategy"
         }
 
         this.curr = {
@@ -76,7 +95,6 @@ class MyGame extends Game{
         );
 
         this.curriculum = [...this.curr.training, ...this.curr.test, ...this.curr.transfer];
-
         this.roundType = "training";
 
         // this.curriculum = [
@@ -90,6 +108,8 @@ class MyGame extends Game{
         //     [4, 4], [4, 4], [4, 4], [4, 4], [4, 4], [4, 4]
         // ]
 
+        this.curriculum = [[3, 3], [3, 3], [3, 3], [3, 3]]
+
         this.roundIndex = -1;
     }
 
@@ -98,7 +118,7 @@ class MyGame extends Game{
         this.roundIndex += 1;
 
         if (this.roundIndex != 0){
-            myGame.saveDataToJatos(content.graph.config);
+            // myGame.saveDataToJatos(content.graph.config);
         }
         if (this.roundIndex == this.curriculum.length){
             // end game
@@ -125,12 +145,25 @@ class MyGame extends Game{
         content.prog.setConfig(content.graph.config)
         // Build graph
         content.graph.buildGraph(this.roundType == "transfer");
+        // Reset char
+        content.pb.set(content.graph.config.start, content.graph.config.target);
         // Log start time
         content.graph.config.startTime = Date.now();
     }
 
+    adaptScreen(){
+        // Check screen dims and adapt text size and image scaling
+        if (window.innerWidth <= 500){
+            this.headingSize = 28;
+            this.ts = 22;
+        } else {
+            this.headingSize = 28;
+            this.ts = 22;
+        }
+    }
+
     endGame(){
         console.log("Call end game scenario");
-        Game.goToJatosComponent(undefined, {}, {mapping: content.graph.imgs});
+        // Game.goToJatosComponent(undefined, {}, {mapping: content.graph.imgs});
     }
 }
